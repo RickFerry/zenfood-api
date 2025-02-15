@@ -3,12 +3,12 @@ spring:
     name: zenfood-api
   jpa:
     database: MYSQL
+    generate-ddl: true
     show-sql: true
     properties:
-      hibernate:
-        format_sql: true
+      format_sql: true
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
   datasource:
     url: jdbc:mysql://localhost:3306/zendb?createDatabaseIfNotExist=true&useSSL=false
     username: root
