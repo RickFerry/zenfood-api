@@ -26,4 +26,7 @@ public class Restaurante {
     private Boolean aberto;
     private LocalDateTime dataCadastro;
     private LocalDateTime dataAtualizacao;
+
+    @ManyToOne
+    private Cozinha cozinha;
 }
