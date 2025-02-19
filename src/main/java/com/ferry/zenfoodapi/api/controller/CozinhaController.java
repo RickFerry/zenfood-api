@@ -1,8 +1,10 @@
 package com.ferry.zenfoodapi.api.controller;
 
 import com.ferry.zenfoodapi.api.service.CozinhaService;
+import com.ferry.zenfoodapi.domain.exception.CozinhaNaoEncontradaException;
 import com.ferry.zenfoodapi.domain.model.Cozinha;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -24,7 +26,7 @@ public class CozinhaController {
     public ResponseEntity<Cozinha> buscar(@PathVariable Long id) {
         try {
             return ResponseEntity.ok(cozinhaService.buscar(id));
-        } catch (RuntimeException e) {
+        } catch (CozinhaNaoEncontradaException e) {
             return ResponseEntity.notFound().build();
         }
     }
@@ -42,7 +44,7 @@ public class CozinhaController {
         try {
             Cozinha cozinhaAtualizada = cozinhaService.atualizar(id, cozinha);
             return ResponseEntity.ok(cozinhaAtualizada);
-        } catch (RuntimeException e) {
+        } catch (CozinhaNaoEncontradaException e) {
             return ResponseEntity.notFound().build();
         }
     }
@@ -52,8 +54,10 @@ public class CozinhaController {
         try {
             cozinhaService.remover(id);
             return ResponseEntity.noContent().build();
-        } catch (RuntimeException e) {
+        } catch (CozinhaNaoEncontradaException e) {
             return ResponseEntity.notFound().build();
+        } catch (DataIntegrityViolationException e) {
+            return ResponseEntity.status(409).build();
         }
     }
 }

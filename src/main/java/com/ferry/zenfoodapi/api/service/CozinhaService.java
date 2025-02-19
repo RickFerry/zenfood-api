@@ -1,9 +1,12 @@
 package com.ferry.zenfoodapi.api.service;
 
+import com.ferry.zenfoodapi.domain.exception.CozinhaNaoEncontradaException;
+import com.ferry.zenfoodapi.domain.exception.ViolacaoDeConstraintException;
 import com.ferry.zenfoodapi.domain.model.Cozinha;
 import com.ferry.zenfoodapi.domain.repository.CozinhaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -38,10 +41,14 @@ public class CozinhaService {
 
     @Transactional
     public void remover(Long id) {
-        cozinhaRepository.delete(getOredElseThrow(id));
+        try {
+            cozinhaRepository.delete(getOredElseThrow(id));
+        } catch (DataIntegrityViolationException e) {
+            throw new ViolacaoDeConstraintException("Cozinha não pode ser removida, pois está em uso");
+        }
     }
 
     private Cozinha getOredElseThrow(Long id) {
-        return cozinhaRepository.findById(id).orElseThrow(() -> new RuntimeException("Cozinha não encontrada"));
+        return cozinhaRepository.findById(id).orElseThrow(() -> new CozinhaNaoEncontradaException("Cozinha não encontrada"));
     }
 }
