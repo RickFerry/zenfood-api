@@ -44,11 +44,13 @@ public class CozinhaService {
         try {
             cozinhaRepository.delete(getOredElseThrow(id));
         } catch (DataIntegrityViolationException e) {
-            throw new ViolacaoDeConstraintException("Cozinha não pode ser removida, pois está em uso");
+            throw new ViolacaoDeConstraintException(
+                    String.format("Cozinha de código %d não pode ser removida, pois está em uso", id));
         }
     }
 
     private Cozinha getOredElseThrow(Long id) {
-        return cozinhaRepository.findById(id).orElseThrow(() -> new CozinhaNaoEncontradaException("Cozinha não encontrada"));
+        return cozinhaRepository.findById(id).orElseThrow(
+                () -> new CozinhaNaoEncontradaException(String.format("Cozinha de código %d não encontrada", id)));
     }
 }
