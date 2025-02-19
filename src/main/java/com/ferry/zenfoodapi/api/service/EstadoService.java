@@ -1,8 +1,10 @@
 package com.ferry.zenfoodapi.api.service;
 
+import com.ferry.zenfoodapi.domain.exception.EstadoNaoEncontradoException;
 import com.ferry.zenfoodapi.domain.model.Estado;
 import com.ferry.zenfoodapi.domain.repository.EstadoRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -16,5 +18,32 @@ public class EstadoService {
     @Transactional(readOnly = true)
     public Page<Estado> listar(Pageable pageable) {
         return estadoRepository.findAll(pageable);
+    }
+
+    @Transactional(readOnly = true)
+    public Estado buscar(Long id) {
+        return getEstadoOrElseThrow(id);
+    }
+
+    @Transactional
+    public Estado salvar(Estado estado) {
+        return estadoRepository.save(estado);
+    }
+
+    @Transactional
+    public Estado atualizar(Long id, Estado estado) {
+        Estado estadoAtual = getEstadoOrElseThrow(id);
+        BeanUtils.copyProperties(estado, estadoAtual, "id");
+        return estadoRepository.save(estadoAtual);
+    }
+
+    @Transactional
+    public void remover(Long id) {
+        estadoRepository.delete(getEstadoOrElseThrow(id));
+    }
+
+    private Estado getEstadoOrElseThrow(Long id) {
+        return estadoRepository.findById(id).orElseThrow(
+                () -> new EstadoNaoEncontradoException(String.format("Estado com id %d não encontrado", id)));
     }
 }
