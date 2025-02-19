@@ -1,16 +1,15 @@
 package com.ferry.zenfoodapi.api.controller;
 
 import com.ferry.zenfoodapi.api.service.RestauranteService;
+import com.ferry.zenfoodapi.domain.exception.CozinhaNaoEncontradaException;
 import com.ferry.zenfoodapi.domain.exception.RestauranteNaoEncontradoException;
 import com.ferry.zenfoodapi.domain.model.Restaurante;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriComponentsBuilder;
 
 @RestController
 @RequiredArgsConstructor
@@ -27,6 +26,40 @@ public class RestauranteController {
     public ResponseEntity<Restaurante> buscar(@PathVariable Long id) {
         try {
             return ResponseEntity.ok(restauranteService.buscar(id));
+        } catch (RestauranteNaoEncontradoException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @PostMapping
+    public ResponseEntity<?> adicionar(@RequestBody Restaurante restaurante, UriComponentsBuilder uriBuilder) {
+        try {
+            Restaurante restauranteSalvo = restauranteService.salvar(restaurante);
+            return ResponseEntity.created(uriBuilder.path("/{id}")
+                    .buildAndExpand(restauranteSalvo.getId())
+                    .toUri()).body(restauranteSalvo);
+        } catch (CozinhaNaoEncontradaException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<?> atualizar(@PathVariable Long id, @RequestBody Restaurante restaurante) {
+        try {
+            Restaurante restauranteAtualizado = restauranteService.atualizar(id, restaurante);
+            return ResponseEntity.ok(restauranteAtualizado);
+        } catch (RestauranteNaoEncontradoException e) {
+            return ResponseEntity.notFound().build();
+        } catch (CozinhaNaoEncontradaException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> remover(@PathVariable Long id) {
+        try {
+            restauranteService.remover(id);
+            return ResponseEntity.noContent().build();
         } catch (RestauranteNaoEncontradoException e) {
             return ResponseEntity.notFound().build();
         }
