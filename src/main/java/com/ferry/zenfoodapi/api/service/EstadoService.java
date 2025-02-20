@@ -1,10 +1,12 @@
 package com.ferry.zenfoodapi.api.service;
 
 import com.ferry.zenfoodapi.domain.exception.EstadoNaoEncontradoException;
+import com.ferry.zenfoodapi.domain.exception.ViolacaoDeConstraintException;
 import com.ferry.zenfoodapi.domain.model.Estado;
 import com.ferry.zenfoodapi.domain.repository.EstadoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -39,7 +41,12 @@ public class EstadoService {
 
     @Transactional
     public void remover(Long id) {
-        estadoRepository.delete(getEstadoOrElseThrow(id));
+        try {
+            estadoRepository.deleteById(id);
+        } catch (DataIntegrityViolationException e) {
+            throw new ViolacaoDeConstraintException(
+                    String.format("Estado de id %d não pode ser removido, pois está em uso", id));
+        }
     }
 
     private Estado getEstadoOrElseThrow(Long id) {

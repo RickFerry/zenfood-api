@@ -2,6 +2,7 @@ package com.ferry.zenfoodapi.api.controller;
 
 import com.ferry.zenfoodapi.api.service.EstadoService;
 import com.ferry.zenfoodapi.domain.exception.EstadoNaoEncontradoException;
+import com.ferry.zenfoodapi.domain.exception.ViolacaoDeConstraintException;
 import com.ferry.zenfoodapi.domain.model.Estado;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -48,12 +49,14 @@ public class EstadoController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> remover(@PathVariable Long id) {
+    public ResponseEntity<?> remover(@PathVariable Long id) {
         try {
             estadoService.remover(id);
             return ResponseEntity.noContent().build();
         } catch (EstadoNaoEncontradoException e) {
             return ResponseEntity.notFound().build();
+        } catch (ViolacaoDeConstraintException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 }
