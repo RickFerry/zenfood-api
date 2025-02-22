@@ -11,7 +11,6 @@ import com.ferry.zenfoodapi.domain.model.Restaurante;
 import com.ferry.zenfoodapi.domain.repository.CozinhaRepository;
 import com.ferry.zenfoodapi.domain.repository.RestauranteRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,7 +51,8 @@ public class RestauranteService {
         Restaurante restauranteAtual = getRestauranteOrElseThrow(id);
         Long cozinhaId = restaurante.getCozinha().getId();
         Cozinha cozinha = getCozinhaOrElseThrow(cozinhaId);
-        copyProperties(restaurante, restauranteAtual, "id", "formasPagamento", "endereco", "dataCadastro");
+        copyProperties(
+                restaurante, restauranteAtual, "id", "formasPagamento", "endereco", "dataCadastro", "produtos");
         restauranteAtual.setCozinha(cozinha);
         return restauranteRepository.save(restauranteAtual);
     }

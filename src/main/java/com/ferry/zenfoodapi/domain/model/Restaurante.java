@@ -42,6 +42,9 @@ public class Restaurante {
     @JsonIgnore
     private Endereco endereco;
 
+    @OneToMany(mappedBy = "restaurante", orphanRemoval = true)
+    private Set<Produto> produtos = new LinkedHashSet<>();
+
     @ManyToOne
     @JoinColumn(name = "cozinha_id")
     private Cozinha cozinha;
