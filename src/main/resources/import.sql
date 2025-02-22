@@ -4,7 +4,6 @@ insert into cozinhas (nome) values ('Italiana');
 insert into cozinhas (nome) values ('Chinesa');
 insert into cozinhas (nome) values ('Mexicana');
 
-
 insert into formas_pagamento (descricao) values ('Dinheiro');
 insert into formas_pagamento (descricao) values ('Cartão de crédito');
 insert into formas_pagamento (descricao) values ('Cartão de débito');
@@ -30,6 +29,32 @@ insert into restaurantes (nome, taxa_frete, ativo, aberto, data_cadastro, data_a
 insert into restaurantes (nome, taxa_frete, ativo, aberto, data_cadastro, data_atualizacao, cozinha_id, cep, logradouro, numero, complemento, bairro, cidade_id) values ('Restaurante 3', 20.0, true, true, now(), now(), 3, '13050-255', 'Rua Floriano Peixoto', '105', 'Apto 202', 'Centro', 3);
 insert into restaurantes (nome, taxa_frete, ativo, aberto, data_cadastro, data_atualizacao, cozinha_id, cep, logradouro, numero, complemento, bairro, cidade_id) values ('Restaurante 4', 25.0, true, true, now(), now(), 4, '13050-255', 'Rua Floriano Peixoto', '105', 'Apto 202', 'Centro', 4);
 insert into restaurantes (nome, taxa_frete, ativo, aberto, data_cadastro, data_atualizacao, cozinha_id, cep, logradouro, numero, complemento, bairro, cidade_id) values ('Restaurante 5', 30.0, true, true, now(), now(), 5, '13050-255', 'Rua Floriano Peixoto', '105', 'Apto 202', 'Centro', 5);
+
+insert into produtos (nome, descricao, preco, ativo, restaurante_id) values ('Produto 1', 'Descrição do produto 1', 10.0, true, 1);
+insert into produtos (nome, descricao, preco, ativo, restaurante_id) values ('Produto 2', 'Descrição do produto 2', 15.0, true, 1);
+insert into produtos (nome, descricao, preco, ativo, restaurante_id) values ('Produto 3', 'Descrição do produto 3', 20.0, true, 1);
+insert into produtos (nome, descricao, preco, ativo, restaurante_id) values ('Produto 4', 'Descrição do produto 4', 25.0, true, 1);
+insert into produtos (nome, descricao, preco, ativo, restaurante_id) values ('Produto 5', 'Descrição do produto 5', 30.0, true, 1);
+insert into produtos (nome, descricao, preco, ativo, restaurante_id) values ('Produto 6', 'Descrição do produto 6', 35.0, true, 2);
+insert into produtos (nome, descricao, preco, ativo, restaurante_id) values ('Produto 7', 'Descrição do produto 7', 40.0, true, 2);
+insert into produtos (nome, descricao, preco, ativo, restaurante_id) values ('Produto 8', 'Descrição do produto 8', 45.0, true, 2);
+insert into produtos (nome, descricao, preco, ativo, restaurante_id) values ('Produto 9', 'Descrição do produto 9', 50.0, true, 2);
+insert into produtos (nome, descricao, preco, ativo, restaurante_id) values ('Produto 10', 'Descrição do produto 10', 55.0, true, 2);
+insert into produtos (nome, descricao, preco, ativo, restaurante_id) values ('Produto 11', 'Descrição do produto 11', 60.0, true, 3);
+insert into produtos (nome, descricao, preco, ativo, restaurante_id) values ('Produto 12', 'Descrição do produto 12', 65.0, true, 3);
+insert into produtos (nome, descricao, preco, ativo, restaurante_id) values ('Produto 13', 'Descrição do produto 13', 70.0, true, 3);
+insert into produtos (nome, descricao, preco, ativo, restaurante_id) values ('Produto 14', 'Descrição do produto 14', 75.0, true, 3);
+insert into produtos (nome, descricao, preco, ativo, restaurante_id) values ('Produto 15', 'Descrição do produto 15', 80.0, true, 3);
+insert into produtos (nome, descricao, preco, ativo, restaurante_id) values ('Produto 16', 'Descrição do produto 16', 85.0, true, 4);
+insert into produtos (nome, descricao, preco, ativo, restaurante_id) values ('Produto 17', 'Descrição do produto 17', 90.0, true, 4);
+insert into produtos (nome, descricao, preco, ativo, restaurante_id) values ('Produto 18', 'Descrição do produto 18', 95.0, true, 4);
+insert into produtos (nome, descricao, preco, ativo, restaurante_id) values ('Produto 19', 'Descrição do produto 19', 100.0, true, 4);
+insert into produtos (nome, descricao, preco, ativo, restaurante_id) values ('Produto 20', 'Descrição do produto 20', 105.0, true, 4);
+insert into produtos (nome, descricao, preco, ativo, restaurante_id) values ('Produto 21', 'Descrição do produto 21', 110.0, true, 5);
+insert into produtos (nome, descricao, preco, ativo, restaurante_id) values ('Produto 22', 'Descrição do produto 22', 115.0, true, 5);
+insert into produtos (nome, descricao, preco, ativo, restaurante_id) values ('Produto 23', 'Descrição do produto 23', 120.0, true, 5);
+insert into produtos (nome, descricao, preco, ativo, restaurante_id) values ('Produto 24', 'Descrição do produto 24', 125.0, true, 5);
+insert into produtos (nome, descricao, preco, ativo, restaurante_id) values ('Produto 25', 'Descrição do produto 25', 130.0, true, 5);
 
 insert into restaurantes_formas_pagamento (restaurante_id, forma_pagamento_id) values (1, 1);
 insert into restaurantes_formas_pagamento (restaurante_id, forma_pagamento_id) values (1, 2);
