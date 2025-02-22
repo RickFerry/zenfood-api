@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -27,10 +29,17 @@ public class Restaurante {
     private BigDecimal taxaFrete;
     private Boolean ativo;
     private Boolean aberto;
+
+    @JsonIgnore
+    @CreationTimestamp
     private LocalDateTime dataCadastro;
+
+    @JsonIgnore
+    @UpdateTimestamp
     private LocalDateTime dataAtualizacao;
 
     @Embedded
+    @JsonIgnore
     private Endereco endereco;
 
     @ManyToOne

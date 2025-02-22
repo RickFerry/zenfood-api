@@ -21,6 +21,8 @@ import org.springframework.util.ReflectionUtils;
 import java.lang.reflect.Field;
 import java.util.Map;
 
+import static org.springframework.beans.BeanUtils.copyProperties;
+
 @Service
 @RequiredArgsConstructor
 public class RestauranteService {
@@ -50,7 +52,7 @@ public class RestauranteService {
         Restaurante restauranteAtual = getRestauranteOrElseThrow(id);
         Long cozinhaId = restaurante.getCozinha().getId();
         Cozinha cozinha = getCozinhaOrElseThrow(cozinhaId);
-        BeanUtils.copyProperties(restaurante, restauranteAtual, "id", "formasPagamento");
+        copyProperties(restaurante, restauranteAtual, "id", "formasPagamento", "endereco", "dataCadastro");
         restauranteAtual.setCozinha(cozinha);
         return restauranteRepository.save(restauranteAtual);
     }
