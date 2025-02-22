@@ -50,7 +50,7 @@ public class RestauranteService {
         Restaurante restauranteAtual = getRestauranteOrElseThrow(id);
         Long cozinhaId = restaurante.getCozinha().getId();
         Cozinha cozinha = getCozinhaOrElseThrow(cozinhaId);
-        BeanUtils.copyProperties(restaurante, restauranteAtual, "id");
+        BeanUtils.copyProperties(restaurante, restauranteAtual, "id", "formasPagamento");
         restauranteAtual.setCozinha(cozinha);
         return restauranteRepository.save(restauranteAtual);
     }
