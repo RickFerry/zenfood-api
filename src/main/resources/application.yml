@@ -22,5 +22,5 @@ spring:
       maximum-pool-size: 5
       minimum-idle: 3
   flyway:
-    locations: classpath:db/migration
+    locations: classpath:db/migration,classpath:db/testdata
     baseline-on-migrate: true
