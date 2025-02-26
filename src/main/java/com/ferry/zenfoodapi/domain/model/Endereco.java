@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.Embeddable;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
@@ -22,7 +23,7 @@ public class Endereco {
     private String complemento;
     private String bairro;
 
-    @ManyToOne
     @JoinColumn(name = "cidade_id")
+    @ManyToOne(fetch = FetchType.LAZY)
     private Cidade cidade;
 }

@@ -42,11 +42,13 @@ public class Restaurante {
     @JsonIgnore
     private Endereco endereco;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "restaurante", orphanRemoval = true)
     private Set<Produto> produtos = new LinkedHashSet<>();
 
-    @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "cozinha_id")
+    @ManyToOne(fetch = FetchType.LAZY)
     private Cozinha cozinha;
 
     @JsonIgnore

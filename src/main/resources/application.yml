@@ -16,3 +16,7 @@ spring:
     username: root
     password: root
     driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+        connection-timeout: 20000
+        maximum-pool-size: 5
+        minimum-idle: 3
