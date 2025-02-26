@@ -5,10 +5,10 @@ spring:
     database: MYSQL
     show-sql: true
     properties:
-      javax:
-        persistence:
-          schema-generation.scripts.action: create
-          schema-generation.scripts.create-target: src/main/resources/schema.sql
+#      javax:
+#        persistence:
+#          schema-generation.scripts.action: create
+#          schema-generation.scripts.create-target: src/main/resources/schema.sql
       hibernate:
         format_sql: true
         dialect: org.hibernate.dialect.MySQL8Dialect
