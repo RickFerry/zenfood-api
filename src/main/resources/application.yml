@@ -3,20 +3,24 @@ spring:
     name: zenfood-api
   jpa:
     database: MYSQL
-    generate-ddl: true
     show-sql: true
     properties:
+      javax:
+        persistence:
+          schema-generation.scripts.action: create
+          schema-generation.scripts.create-target: src/main/resources/schema.sql
       hibernate:
         format_sql: true
         dialect: org.hibernate.dialect.MySQL8Dialect
-    hibernate:
-      ddl-auto: create
   datasource:
     url: jdbc:mysql://localhost:3306/zendb?createDatabaseIfNotExist=true&useSSL=false
     username: root
     password: root
     driver-class-name: com.mysql.cj.jdbc.Driver
     hikari:
-        connection-timeout: 20000
-        maximum-pool-size: 5
-        minimum-idle: 3
+      connection-timeout: 20000
+      maximum-pool-size: 5
+      minimum-idle: 3
+  flyway:
+    locations: classpath:db/migration
+    baseline-on-migrate: true
