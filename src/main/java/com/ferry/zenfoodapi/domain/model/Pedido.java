@@ -43,17 +43,17 @@ public class Pedido {
     private LocalDateTime dataEntrega;
 
     @ManyToOne
-    @JoinColumn(nullable = false)
+    @JoinColumn(nullable = false, name = "forma_pagamento_id")
     private FormaPagamento formaPagamento;
 
     @ManyToOne
-    @JoinColumn(nullable = false)
+    @JoinColumn(nullable = false, name = "restaurante_id")
     private Restaurante restaurante;
 
     @ManyToOne
     @JoinColumn(name = "cliente_id", nullable = false)
     private Usuario cliente;
 
-    @OneToMany(mappedBy = "pedido")
+    @OneToMany(mappedBy = "pedido", orphanRemoval = true)
     private Set<ItemPedido> itens = new LinkedHashSet<>();
 }

@@ -26,10 +26,10 @@ public class ItemPedido {
     private String observacao;
 
     @ManyToOne
-    @JoinColumn(nullable = false)
+    @JoinColumn(nullable = false, name = "pedido_id")
     private Pedido pedido;
 
     @ManyToOne
-    @JoinColumn(nullable = false)
+    @JoinColumn(nullable = false, name = "produto_id")
     private Produto produto;
 }
