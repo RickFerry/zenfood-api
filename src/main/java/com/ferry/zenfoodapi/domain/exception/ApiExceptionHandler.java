@@ -17,7 +17,9 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(EntidadeNaoEncontradaException.class)
     public ResponseEntity<Object> handleEntidadeNaoEncontradaException(
             EntidadeNaoEncontradaException e, WebRequest request) {
-        return handleExceptionInternal(e, e.getMessage(), new HttpHeaders(), HttpStatus.NOT_FOUND, request);
+        Error body = createErrorBuilder(HttpStatus.NOT_FOUND, e.getMessage(), ErrorType.ENTIDADE_NAO_ENCONTRADA).build();
+
+        return handleExceptionInternal(e, body, new HttpHeaders(), HttpStatus.NOT_FOUND, request);
     }
 
     @ExceptionHandler(NegocioException.class)
@@ -46,6 +48,14 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
                     .build();
         }
         return super.handleExceptionInternal(ex, body, headers, status, request);
+    }
+
+    private Error.ErrorBuilder createErrorBuilder(HttpStatus status, String detail, ErrorType type) {
+        return Error.builder()
+                .status(status.value())
+                .type(type.getPath())
+                .title(type.getTitle())
+                .detail(detail);
     }
 
     @Getter
