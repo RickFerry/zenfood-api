@@ -13,13 +13,17 @@ import com.ferry.zenfoodapi.domain.repository.RestauranteRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.http.server.ServletServerHttpRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ReflectionUtils;
 
+import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Field;
 import java.util.Map;
 
+import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCause;
 import static org.springframework.beans.BeanUtils.copyProperties;
 
 @Service
@@ -58,9 +62,9 @@ public class RestauranteService {
     }
 
     @Transactional
-    public Restaurante atualizarParcial(Long id, Map<String, Object> campos) {
+    public Restaurante atualizarParcial(Long id, Map<String, Object> campos, HttpServletRequest request) {
         Restaurante restauranteAtual = getRestauranteOrElseThrow(id);
-        merge(campos, restauranteAtual);
+        merge(campos, restauranteAtual, request);
         return this.atualizar(id, restauranteAtual);
     }
 
@@ -73,22 +77,28 @@ public class RestauranteService {
         }
     }
 
-    private void merge(Map<String, Object> camposOrigem, Restaurante restauranteDestino) {
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        ObjectNode objectNode = objectMapper.convertValue(camposOrigem, ObjectNode.class);
+    private void merge(Map<String, Object> camposOrigem, Restaurante restauranteDestino, HttpServletRequest request) {
+        ServletServerHttpRequest httpRequest = new ServletServerHttpRequest(request);
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            objectMapper.configure(DeserializationFeature.FAIL_ON_IGNORED_PROPERTIES, true);
+            objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, true);
+            ObjectNode objectNode = objectMapper.convertValue(camposOrigem, ObjectNode.class);
 
-        objectNode.fields().forEachRemaining(entry -> {
-            String nomePropriedade = entry.getKey();
-            JsonNode valorPropriedade = entry.getValue();
+            objectNode.fields().forEachRemaining(entry -> {
+                String nomePropriedade = entry.getKey();
+                JsonNode valorPropriedade = entry.getValue();
 
-            Field field = ReflectionUtils.findField(Restaurante.class, nomePropriedade);
-            if (field != null) {
-                field.setAccessible(true);
-                Object novoValor = objectMapper.convertValue(valorPropriedade, field.getType());
-                ReflectionUtils.setField(field, restauranteDestino, novoValor);
-            }
-        });
+                Field field = ReflectionUtils.findField(Restaurante.class, nomePropriedade);
+                if (field != null) {
+                    field.setAccessible(true);
+                    Object novoValor = objectMapper.convertValue(valorPropriedade, field.getType());
+                    ReflectionUtils.setField(field, restauranteDestino, novoValor);
+                }
+            });
+        } catch (IllegalArgumentException e) {
+            throw new HttpMessageNotReadableException(e.getMessage(), getRootCause(e), httpRequest);
+        }
     }
 
     private Cozinha getCozinhaOrElseThrow(Long cozinhaId) {
