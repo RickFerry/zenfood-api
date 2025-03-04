@@ -1,9 +1,7 @@
 package com.ferry.zenfoodapi.api.service;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.ferry.zenfoodapi.domain.exception.CozinhaNaoEncontradaException;
 import com.ferry.zenfoodapi.domain.exception.RestauranteNaoEncontradoException;
 import com.ferry.zenfoodapi.domain.model.Cozinha;
@@ -83,18 +81,15 @@ public class RestauranteService {
             ObjectMapper objectMapper = new ObjectMapper();
             objectMapper.configure(DeserializationFeature.FAIL_ON_IGNORED_PROPERTIES, true);
             objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, true);
-            ObjectNode objectNode = objectMapper.convertValue(camposOrigem, ObjectNode.class);
+            Restaurante restauranteOrigem = objectMapper.convertValue(camposOrigem, Restaurante.class);
 
-            objectNode.fields().forEachRemaining(entry -> {
-                String nomePropriedade = entry.getKey();
-                JsonNode valorPropriedade = entry.getValue();
-
+            camposOrigem.forEach((nomePropriedade, valorPropriedade) -> {
                 Field field = ReflectionUtils.findField(Restaurante.class, nomePropriedade);
-                if (field != null) {
-                    field.setAccessible(true);
-                    Object novoValor = objectMapper.convertValue(valorPropriedade, field.getType());
-                    ReflectionUtils.setField(field, restauranteDestino, novoValor);
-                }
+                field.setAccessible(true);
+
+                Object novoValor = ReflectionUtils.getField(field, restauranteOrigem);
+
+                ReflectionUtils.setField(field, restauranteDestino, novoValor);
             });
         } catch (IllegalArgumentException e) {
             throw new HttpMessageNotReadableException(e.getMessage(), getRootCause(e), httpRequest);

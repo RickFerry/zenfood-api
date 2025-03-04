@@ -8,6 +8,7 @@ import lombok.Builder;
 import lombok.Getter;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.hibernate.annotations.CreationTimestamp;
+import org.springframework.beans.TypeMismatchException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -42,7 +43,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(EntidadeNaoEncontradaException.class)
     public ResponseEntity<Object> handleEntidadeNaoEncontradaException(
             EntidadeNaoEncontradaException e, WebRequest request) {
-        Error body = createErrorBuilder(HttpStatus.NOT_FOUND, e.getMessage(), ErrorType.ENTIDADE_NAO_ENCONTRADA)
+        Error body = createErrorBuilder(HttpStatus.NOT_FOUND, e.getMessage(), ErrorType.RECURSO_NAO_ENCONTRADO)
                 .userMessage(e.getMessage())
                 .build();
 
@@ -69,7 +70,8 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @Override
-    protected ResponseEntity<Object> handleNoHandlerFoundException(NoHandlerFoundException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
+    protected ResponseEntity<Object> handleNoHandlerFoundException(
+            NoHandlerFoundException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
         ErrorType errorType = ErrorType.RECURSO_NAO_ENCONTRADO;
         String detail = String.format("O recurso %s, que você tentou acessar, é inexistente.", ex.getRequestURL());
         Error body = createErrorBuilder(status, detail, errorType)
@@ -79,14 +81,13 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @Override
-    protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
+    protected ResponseEntity<Object> handleHttpMessageNotReadable(
+            HttpMessageNotReadableException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
         Throwable cause = ExceptionUtils.getRootCause(ex);
         if (cause instanceof InvalidFormatException) {
             return handleInvalidFormatException((InvalidFormatException) cause, headers, status, request);
         } else if (ex.getCause() instanceof PropertyBindingException) {
             return handlePropertyBindingException((PropertyBindingException) ex.getCause(), headers, status, request);
-        } else if (cause instanceof MethodArgumentTypeMismatchException) {
-            return handleMethodArgumentTypeMismatchException((MethodArgumentTypeMismatchException) cause, headers, status, request);
         }
         ErrorType errorType = ErrorType.MENSAGEM_INCOMPREENSIVEL;
         String detail = "O corpo da requisição está inválido. Verifique erro de sintaxe.";
@@ -101,18 +102,28 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
             Exception ex, Object body, HttpHeaders headers, HttpStatus status, WebRequest request) {
         if (body == null) {
             body = Error.builder()
+                    .timestamp(LocalDateTime.now())
                     .title(status.getReasonPhrase())
                     .status(status.value())
                     .userMessage(MSG_USUARIO_FINAL)
                     .build();
         } else if (body instanceof String) {
             body = Error.builder()
+                    .timestamp(LocalDateTime.now())
                     .title((String) body)
                     .status(status.value())
                     .userMessage(MSG_USUARIO_FINAL)
                     .build();
         }
         return super.handleExceptionInternal(ex, body, headers, status, request);
+    }
+
+    @Override
+    protected ResponseEntity<Object> handleTypeMismatch(TypeMismatchException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
+        if (ex instanceof MethodArgumentTypeMismatchException) {
+            return handleMethodArgumentTypeMismatchException((MethodArgumentTypeMismatchException) ex, headers, status, request);
+        }
+        return super.handleTypeMismatch(ex, headers, status, request);
     }
 
     private ResponseEntity<Object> handleMethodArgumentTypeMismatchException(
@@ -156,7 +167,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
                         "Corrija e informe um valor compatível com o tipo %s.",
                 path, cause.getValue(), cause.getTargetType().getSimpleName());
 
-        Error body = createErrorBuilder(status, detail, ErrorType.PARAMETRO_INVALIDO)
+        Error body = createErrorBuilder(status, detail, ErrorType.MENSAGEM_INCOMPREENSIVEL)
                 .userMessage(MSG_USUARIO_FINAL)
                 .build();
 
@@ -165,6 +176,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
     private Error.ErrorBuilder createErrorBuilder(HttpStatus status, String detail, ErrorType type) {
         return Error.builder()
+                .timestamp(LocalDateTime.now())
                 .status(status.value())
                 .type(type.getUri())
                 .title(type.getTitle())
@@ -179,8 +191,6 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         private String type;
         private String title;
         private String detail;
-
-        @CreationTimestamp
         private LocalDateTime timestamp;
         private String userMessage;
     }

@@ -59,11 +59,8 @@ public class RestauranteController {
     @PatchMapping("/{id}")
     public ResponseEntity<?> atualizarParcial(
             @PathVariable Long id, @RequestBody Map<String, Object> campos, HttpServletRequest request) {
-        try {
-            return ResponseEntity.ok(restauranteService.atualizarParcial(id, campos, request));
-        } catch (RestauranteNaoEncontradoException e) {
-            return ResponseEntity.notFound().build();
-        }
+
+        return ResponseEntity.ok(restauranteService.atualizarParcial(id, campos, request));
     }
 
     @DeleteMapping("/{id}")
