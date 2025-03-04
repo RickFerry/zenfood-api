@@ -7,12 +7,13 @@ import com.fasterxml.jackson.databind.exc.PropertyBindingException;
 import lombok.Builder;
 import lombok.Getter;
 import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.beans.TypeMismatchException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
@@ -21,7 +22,9 @@ import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @ControllerAdvice
 public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
@@ -126,6 +129,25 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         return super.handleTypeMismatch(ex, headers, status, request);
     }
 
+    @Override
+    protected ResponseEntity<Object> handleMethodArgumentNotValid(
+            MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
+        ErrorType errorType = ErrorType.DADOS_INVALIDOS;
+        String detail = "Um ou mais campos estão inválidos. Faça o preenchimento correto e tente novamente.";
+
+        BindingResult bindingResult = ex.getBindingResult();
+        List<Field> fields = bindingResult.getFieldErrors().stream().map(fieldError -> Field.builder()
+                .name(fieldError.getField())
+                .userMessage(fieldError.getDefaultMessage())
+                .build()).collect(Collectors.toList());
+
+        Error body = createErrorBuilder(status, detail, errorType)
+                .userMessage(MSG_USUARIO_FINAL)
+                .fields(fields)
+                .build();
+        return handleExceptionInternal(ex, body, headers, status, request);
+    }
+
     private ResponseEntity<Object> handleMethodArgumentTypeMismatchException(
             MethodArgumentTypeMismatchException cause, HttpHeaders headers, HttpStatus status, WebRequest request) {
         ErrorType errorType = ErrorType.PARAMETRO_INVALIDO;
@@ -192,6 +214,15 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         private String title;
         private String detail;
         private LocalDateTime timestamp;
+        private String userMessage;
+        private List<Field> fields;
+    }
+
+    @Getter
+    @Builder
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    public static class Field {
+        private String name;
         private String userMessage;
     }
 }

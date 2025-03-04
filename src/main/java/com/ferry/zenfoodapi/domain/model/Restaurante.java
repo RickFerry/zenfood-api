@@ -9,6 +9,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.LinkedHashSet;
@@ -25,6 +26,8 @@ public class Restaurante {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @NotBlank
     private String nome;
     private BigDecimal taxaFrete;
     private Boolean ativo;
@@ -46,7 +49,7 @@ public class Restaurante {
     @OneToMany(mappedBy = "restaurante", orphanRemoval = true)
     private Set<Produto> produtos = new LinkedHashSet<>();
 
-    @JsonIgnore
+//    @JsonIgnore
     @JoinColumn(name = "cozinha_id")
     @ManyToOne(fetch = FetchType.LAZY)
     private Cozinha cozinha;

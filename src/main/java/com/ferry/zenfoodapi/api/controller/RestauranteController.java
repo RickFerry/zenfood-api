@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import java.util.Map;
 
 @RestController
@@ -36,7 +37,7 @@ public class RestauranteController {
     }
 
     @PostMapping
-    public ResponseEntity<?> adicionar(@RequestBody Restaurante restaurante, UriComponentsBuilder uriBuilder) {
+    public ResponseEntity<?> adicionar(@RequestBody @Valid Restaurante restaurante, UriComponentsBuilder uriBuilder) {
         try {
             Restaurante restauranteSalvo = restauranteService.salvar(restaurante);
             return ResponseEntity.created(uriBuilder.path("/{id}")
@@ -48,7 +49,7 @@ public class RestauranteController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> atualizar(@PathVariable Long id, @RequestBody Restaurante restaurante) {
+    public ResponseEntity<?> atualizar(@PathVariable Long id, @RequestBody @Valid Restaurante restaurante) {
         try {
             return ResponseEntity.ok(restauranteService.atualizar(id, restaurante));
         } catch (CozinhaNaoEncontradaException e) {
