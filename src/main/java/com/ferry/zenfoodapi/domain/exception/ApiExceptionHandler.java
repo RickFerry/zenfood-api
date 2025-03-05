@@ -79,6 +79,11 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         return handleExceptionInternal(e, body, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
     }
 
+    @ExceptionHandler(ValidacaoException.class)
+    public ResponseEntity<java.lang.Object> handleValidacaoException(ValidacaoException e, WebRequest request) {
+        return handleValidationInternal(e, e.getBindingResult(), new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
+    }
+
     @Override
     protected ResponseEntity<java.lang.Object> handleNoHandlerFoundException(
             NoHandlerFoundException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
@@ -139,25 +144,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     @Override
     protected ResponseEntity<java.lang.Object> handleMethodArgumentNotValid(
             MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
-        ErrorType errorType = ErrorType.DADOS_INVALIDOS;
-        String detail = "Um ou mais campos estão inválidos. Faça o preenchimento correto e tente novamente.";
-        BindingResult bindingResult = ex.getBindingResult();
-        List<Object> objects = bindingResult.getAllErrors().stream().map(objectError -> {
-            String msg = messageSource.getMessage(objectError, LocaleContextHolder.getLocale());
-            String name = objectError.getObjectName();
-            if (objectError instanceof FieldError) {
-                name = ((FieldError) objectError).getField();
-            }
-            return Object.builder()
-                    .name(name)
-                    .userMessage(msg)
-                    .build();
-        }).collect(Collectors.toList());
-        Error body = createErrorBuilder(status, detail, errorType)
-                .userMessage(MSG_USUARIO_FINAL)
-                .objects(objects)
-                .build();
-        return handleExceptionInternal(ex, body, headers, status, request);
+        return handleValidationInternal(ex, ex.getBindingResult(), headers, status, request);
     }
 
     private ResponseEntity<java.lang.Object> handleMethodArgumentTypeMismatchException(
@@ -208,6 +195,28 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         return handleExceptionInternal(cause, body, headers, status, request);
     }
 
+    private ResponseEntity<java.lang.Object> handleValidationInternal(
+            Exception ex, BindingResult bindingResult, HttpHeaders headers, HttpStatus status, WebRequest request) {
+        ErrorType errorType = ErrorType.DADOS_INVALIDOS;
+        String detail = "Um ou mais campos estão inválidos. Faça o preenchimento correto e tente novamente.";
+        List<Object> objects = bindingResult.getAllErrors().stream().map(objectError -> {
+            String msg = messageSource.getMessage(objectError, LocaleContextHolder.getLocale());
+            String name = objectError.getObjectName();
+            if (objectError instanceof FieldError) {
+                name = ((FieldError) objectError).getField();
+            }
+            return Object.builder()
+                    .name(name)
+                    .userMessage(msg)
+                    .build();
+        }).collect(Collectors.toList());
+        Error body = createErrorBuilder(status, detail, errorType)
+                .userMessage(MSG_USUARIO_FINAL)
+                .objects(objects)
+                .build();
+        return handleExceptionInternal(ex, body, headers, status, request);
+    }
+
     private Error.ErrorBuilder createErrorBuilder(HttpStatus status, String detail, ErrorType type) {
         return Error.builder()
                 .timestamp(LocalDateTime.now())
@@ -221,6 +230,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     @Builder
     @JsonInclude(JsonInclude.Include.NON_NULL)
     public static class Error {
+
         private Integer status;
         private String type;
         private String title;

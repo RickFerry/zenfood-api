@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ferry.zenfoodapi.domain.exception.CozinhaNaoEncontradaException;
 import com.ferry.zenfoodapi.domain.exception.RestauranteNaoEncontradoException;
+import com.ferry.zenfoodapi.domain.exception.ValidacaoException;
 import com.ferry.zenfoodapi.domain.model.Cozinha;
 import com.ferry.zenfoodapi.domain.model.Restaurante;
 import com.ferry.zenfoodapi.domain.repository.CozinhaRepository;
@@ -16,6 +17,8 @@ import org.springframework.http.server.ServletServerHttpRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ReflectionUtils;
+import org.springframework.validation.BeanPropertyBindingResult;
+import org.springframework.validation.SmartValidator;
 
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Field;
@@ -29,6 +32,7 @@ import static org.springframework.beans.BeanUtils.copyProperties;
 public class RestauranteService {
     private final RestauranteRepository restauranteRepository;
     private final CozinhaRepository cozinhaRepository;
+    private final SmartValidator validator;
 
     @Transactional(readOnly = true)
     public Page<Restaurante> listar(Pageable pageable) {
@@ -63,7 +67,17 @@ public class RestauranteService {
     public Restaurante atualizarParcial(Long id, Map<String, Object> campos, HttpServletRequest request) {
         Restaurante restauranteAtual = getRestauranteOrElseThrow(id);
         merge(campos, restauranteAtual, request);
+        validador(restauranteAtual);
         return this.atualizar(id, restauranteAtual);
+    }
+
+    private void validador(Restaurante restauranteAtual) {
+        BeanPropertyBindingResult bindingResult = new BeanPropertyBindingResult(restauranteAtual, "restaurante");
+        validator.validate(restauranteAtual, bindingResult);
+
+        if (bindingResult.hasErrors()) {
+            throw new ValidacaoException(bindingResult);
+        }
     }
 
     @Transactional
