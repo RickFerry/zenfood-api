@@ -3,61 +3,61 @@ create table cidades (
     nome varchar(255),
     estado_id bigint,
     primary key (id)
-) engine=InnoDB;
+);
 
 create table cozinhas (
    id bigint not null auto_increment,
     nome varchar(255),
     primary key (id)
-) engine=InnoDB;
+);
 
 create table estados (
    id bigint not null auto_increment,
     nome varchar(255),
     primary key (id)
-) engine=InnoDB;
+);
 
 create table formas_pagamento (
    id bigint not null auto_increment,
     descricao varchar(255),
     primary key (id)
-) engine=InnoDB;
+);
 
 create table grupos (
    id bigint not null auto_increment,
     nome varchar(255),
     primary key (id)
-) engine=InnoDB;
+);
 
 create table grupos_permissoes (
    grupo_id bigint not null,
     permissao_id bigint not null,
     primary key (grupo_id, permissao_id)
-) engine=InnoDB;
+);
 
 create table permissoes (
    id bigint not null auto_increment,
     descricao varchar(255),
     nome varchar(255),
     primary key (id)
-) engine=InnoDB;
+);
 
 create table produtos (
    id bigint not null auto_increment,
-    ativo bit,
+    ativo boolean,
     descricao varchar(255),
     nome varchar(255),
     preco decimal(19,2),
     restaurante_id bigint,
     primary key (id)
-) engine=InnoDB;
+);
 
 create table restaurantes (
    id bigint not null auto_increment,
-    aberto bit,
-    ativo bit,
-    data_atualizacao datetime(6),
-    data_cadastro datetime(6),
+    aberto boolean,
+    ativo boolean,
+    data_atualizacao timestamp,
+    data_cadastro timestamp,
     bairro varchar(255),
     cep varchar(255),
     complemento varchar(255),
@@ -68,28 +68,28 @@ create table restaurantes (
     cozinha_id bigint,
     cidade_id bigint,
     primary key (id)
-) engine=InnoDB;
+);
 
 create table restaurantes_formas_pagamento (
    restaurante_id bigint not null,
     forma_pagamento_id bigint not null,
     primary key (restaurante_id, forma_pagamento_id)
-) engine=InnoDB;
+);
 
 create table usuarios (
    id bigint not null auto_increment,
-    data_cadastro datetime(6),
+    data_cadastro timestamp,
     email varchar(255),
     nome varchar(255),
     senha varchar(255),
     primary key (id)
-) engine=InnoDB;
+);
 
 create table usuarios_grupos (
    usuario_id bigint not null,
     grupo_id bigint not null,
     primary key (usuario_id, grupo_id)
-) engine=InnoDB;
+);
 
 alter table cidades
    add constraint FKdt0b3ronwpi1upsrhaeq6r69n

@@ -1,5 +1,3 @@
-set foreign_key_checks=0;
-
 delete from usuarios_grupos;
 delete from grupos_permissoes;
 delete from usuarios;
@@ -13,17 +11,15 @@ delete from cozinhas;
 delete from cidades;
 delete from estados;
 
-set foreign_key_checks=1;
-
-alter table cidades auto_increment = 1;
-alter table cozinhas auto_increment = 1;
-alter table estados auto_increment = 1;
-alter table formas_pagamento auto_increment = 1;
-alter table grupos auto_increment = 1;
-alter table permissoes auto_increment = 1;
-alter table produtos auto_increment = 1;
-alter table restaurantes auto_increment = 1;
-alter table usuarios auto_increment = 1;
+alter table cidades alter column id restart with 1;
+alter table cozinhas alter column id restart with 1;
+alter table estados alter column id restart with 1;
+alter table formas_pagamento alter column id restart with 1;
+alter table grupos alter column id restart with 1;
+alter table permissoes alter column id restart with 1;
+alter table produtos alter column id restart with 1;
+alter table restaurantes alter column id restart with 1;
+alter table usuarios alter column id restart with 1;
 
 insert into cozinhas (nome) values ('Brasileira');
 insert into cozinhas (nome) values ('Japonesa');

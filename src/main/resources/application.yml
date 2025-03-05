@@ -2,7 +2,7 @@ spring:
   application:
     name: zenfood-api
   jpa:
-    database: MYSQL
+    database: H2
     show-sql: true
     properties:
 #      javax:
@@ -11,12 +11,12 @@ spring:
 #          schema-generation.scripts.create-target: src/main/resources/schema.sql
       hibernate:
         format_sql: true
-        dialect: org.hibernate.dialect.MySQL8Dialect
+        dialect: org.hibernate.dialect.H2Dialect
   datasource:
-    url: jdbc:mysql://localhost:3306/zendb?createDatabaseIfNotExist=true&useSSL=false
-    username: root
-    password: root
-    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:h2:file:C:\\DataBases\\zendb;DB_CLOSE_ON_EXIT=FALSE;AUTO_RECONNECT=TRUE
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
     hikari:
       connection-timeout: 20000
       maximum-pool-size: 5

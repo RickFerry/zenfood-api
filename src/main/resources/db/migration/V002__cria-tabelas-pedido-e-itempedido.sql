@@ -7,14 +7,14 @@ create table itens_pedido (
     pedido_id bigint not null,
     produto_id bigint not null,
     primary key (id)
-) engine=InnoDB;
+);
 
 create table pedidos (
    id bigint not null auto_increment,
-    data_cancelamento datetime(6),
-    data_confirmacao datetime(6),
-    data_criacao datetime(6),
-    data_entrega datetime(6),
+    data_cancelamento timestamp,
+    data_confirmacao timestamp,
+    data_criacao timestamp,
+    data_entrega timestamp,
     bairro varchar(255),
     cep varchar(255),
     complemento varchar(255),
@@ -29,7 +29,7 @@ create table pedidos (
     forma_pagamento_id bigint not null,
     restaurante_id bigint not null,
     primary key (id)
-) engine=InnoDB;
+);
 
 alter table itens_pedido
    add constraint FK42mycompce3b7yt3l6ukdwsxy
