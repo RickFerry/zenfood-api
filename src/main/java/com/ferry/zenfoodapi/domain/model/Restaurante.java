@@ -1,7 +1,7 @@
 package com.ferry.zenfoodapi.domain.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.ferry.zenfoodapi.Groups;
+import com.ferry.zenfoodapi.core.validation.Groups;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -26,6 +26,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "restaurantes")
+//@ZeroValueIncludeDescription(valueField = "taxaFrete", descriptionField = "nome", description = "Frete Grátis")
 public class Restaurante {
 
     @Id
@@ -35,6 +36,8 @@ public class Restaurante {
     @NotBlank
     private String nome;
 
+    //    @TaxaFrete
+//    @Multiply(number = 5)
     @PositiveOrZero
     private BigDecimal taxaFrete;
 

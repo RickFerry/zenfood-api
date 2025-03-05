@@ -1,4 +1,4 @@
-package com.ferry.zenfoodapi;
+package com.ferry.zenfoodapi.core.validation;
 
 public interface Groups {
 

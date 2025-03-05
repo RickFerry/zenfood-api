@@ -1,62 +1,115 @@
-create table itens_pedido (
-   id bigint not null auto_increment,
-    observacao varchar(255),
-    preco_total decimal(19,2),
-    preco_unitario decimal(19,2),
-    quantidade integer,
-    pedido_id bigint not null,
-    produto_id bigint not null,
-    primary key (id)
-);
+set foreign_key_checks=0;
 
-create table pedidos (
-   id bigint not null auto_increment,
-    data_cancelamento timestamp,
-    data_confirmacao timestamp,
-    data_criacao timestamp,
-    data_entrega timestamp,
-    bairro varchar(255),
-    cep varchar(255),
-    complemento varchar(255),
-    logradouro varchar(255),
-    numero varchar(255),
-    status varchar(255),
-    subtotal decimal(19,2),
-    taxa_frete decimal(19,2),
-    valor_total decimal(19,2),
-    cliente_id bigint not null,
-    cidade_id bigint,
-    forma_pagamento_id bigint not null,
-    restaurante_id bigint not null,
-    primary key (id)
-);
+delete from usuarios_grupos;
+delete from grupos_permissoes;
+delete from usuarios;
+delete from grupos;
+delete from permissoes;
+delete from restaurantes_formas_pagamento;
+delete from formas_pagamento;
+delete from produtos;
+delete from restaurantes;
+delete from cozinhas;
+delete from cidades;
+delete from estados;
 
-alter table itens_pedido
-   add constraint FK42mycompce3b7yt3l6ukdwsxy
-   foreign key (pedido_id)
-   references pedidos (id);
+set foreign_key_checks=1;
 
-alter table itens_pedido
-   add constraint FKxytdlekpdaobqphujy9bmuhl
-   foreign key (produto_id)
-   references produtos (id);
+alter table cidades auto_increment = 1;
+alter table cozinhas auto_increment = 1;
+alter table estados auto_increment = 1;
+alter table formas_pagamento auto_increment = 1;
+alter table grupos auto_increment = 1;
+alter table permissoes auto_increment = 1;
+alter table produtos auto_increment = 1;
+alter table restaurantes auto_increment = 1;
+alter table usuarios auto_increment = 1;
 
-alter table pedidos
-   add constraint FK6dtctern9votxnaydg7g2uifb
-   foreign key (cliente_id)
-   references usuarios (id);
+insert into cozinhas (nome) values ('Brasileira');
+insert into cozinhas (nome) values ('Japonesa');
+insert into cozinhas (nome) values ('Italiana');
+insert into cozinhas (nome) values ('Chinesa');
+insert into cozinhas (nome) values ('Mexicana');
 
-alter table pedidos
-   add constraint FK5gixn3m0yt8wagkilvtfsp148
-   foreign key (cidade_id)
-   references cidades (id);
+insert into formas_pagamento (descricao) values ('Dinheiro');
+insert into formas_pagamento (descricao) values ('Cartão de crédito');
+insert into formas_pagamento (descricao) values ('Cartão de débito');
+insert into formas_pagamento (descricao) values ('Vale refeição');
+insert into formas_pagamento (descricao) values ('Vale alimentação');
+insert into formas_pagamento (descricao) values ('Pix');
 
-alter table pedidos
-   add constraint FKmaivwga0val3dceem887sihbt
-   foreign key (forma_pagamento_id)
-   references formas_pagamento (id);
+insert into estados (nome) values ('São Paulo');
+insert into estados (nome) values ('Rio de Janeiro');
+insert into estados (nome) values ('Minas Gerais');
+insert into estados (nome) values ('Bahia');
+insert into estados (nome) values ('Ceará');
 
-alter table pedidos
-   add constraint FKf3mf88pcxawf3nt06400qmqn3
-   foreign key (restaurante_id)
-   references restaurantes (id);
+insert into cidades (nome, estado_id) values ('Campinas', 1);
+insert into cidades (nome, estado_id) values ('São Paulo', 1);
+insert into cidades (nome, estado_id) values ('Rio de Janeiro', 2);
+insert into cidades (nome, estado_id) values ('Belo Horizonte', 3);
+insert into cidades (nome, estado_id) values ('Salvador', 4);
+insert into cidades (nome, estado_id) values ('Fortaleza', 5);
+
+insert into restaurantes (nome, taxa_frete, ativo, aberto, data_cadastro, data_atualizacao, cozinha_id, cep, logradouro, numero, complemento, bairro, cidade_id) values ('Restaurante 1', 10.0, true, true, now(), now(), 1, '13050-255', 'Rua Floriano Peixoto', '105', 'Apto 202', 'Centro', 1);
+insert into restaurantes (nome, taxa_frete, ativo, aberto, data_cadastro, data_atualizacao, cozinha_id, cep, logradouro, numero, complemento, bairro, cidade_id) values ('Restaurante 2', 15.0, true, true, now(), now(), 2, '13050-255', 'Rua Floriano Peixoto', '105', 'Apto 202', 'Centro', 2);
+insert into restaurantes (nome, taxa_frete, ativo, aberto, data_cadastro, data_atualizacao, cozinha_id, cep, logradouro, numero, complemento, bairro, cidade_id) values ('Restaurante 3', 20.0, true, true, now(), now(), 3, '13050-255', 'Rua Floriano Peixoto', '105', 'Apto 202', 'Centro', 3);
+insert into restaurantes (nome, taxa_frete, ativo, aberto, data_cadastro, data_atualizacao, cozinha_id, cep, logradouro, numero, complemento, bairro, cidade_id) values ('Restaurante 4', 25.0, true, true, now(), now(), 4, '13050-255', 'Rua Floriano Peixoto', '105', 'Apto 202', 'Centro', 4);
+insert into restaurantes (nome, taxa_frete, ativo, aberto, data_cadastro, data_atualizacao, cozinha_id, cep, logradouro, numero, complemento, bairro, cidade_id) values ('Restaurante 5', 30.0, true, true, now(), now(), 5, '13050-255', 'Rua Floriano Peixoto', '105', 'Apto 202', 'Centro', 5);
+
+insert into produtos (nome, descricao, preco, ativo, restaurante_id) values ('Produto 1', 'Descrição do produto 1', 10.0, true, 1);
+insert into produtos (nome, descricao, preco, ativo, restaurante_id) values ('Produto 2', 'Descrição do produto 2', 15.0, true, 1);
+insert into produtos (nome, descricao, preco, ativo, restaurante_id) values ('Produto 3', 'Descrição do produto 3', 20.0, true, 1);
+insert into produtos (nome, descricao, preco, ativo, restaurante_id) values ('Produto 4', 'Descrição do produto 4', 25.0, true, 1);
+insert into produtos (nome, descricao, preco, ativo, restaurante_id) values ('Produto 5', 'Descrição do produto 5', 30.0, true, 1);
+insert into produtos (nome, descricao, preco, ativo, restaurante_id) values ('Produto 6', 'Descrição do produto 6', 35.0, true, 2);
+insert into produtos (nome, descricao, preco, ativo, restaurante_id) values ('Produto 7', 'Descrição do produto 7', 40.0, true, 2);
+insert into produtos (nome, descricao, preco, ativo, restaurante_id) values ('Produto 8', 'Descrição do produto 8', 45.0, true, 2);
+insert into produtos (nome, descricao, preco, ativo, restaurante_id) values ('Produto 9', 'Descrição do produto 9', 50.0, true, 2);
+insert into produtos (nome, descricao, preco, ativo, restaurante_id) values ('Produto 10', 'Descrição do produto 10', 55.0, true, 2);
+insert into produtos (nome, descricao, preco, ativo, restaurante_id) values ('Produto 11', 'Descrição do produto 11', 60.0, true, 3);
+insert into produtos (nome, descricao, preco, ativo, restaurante_id) values ('Produto 12', 'Descrição do produto 12', 65.0, true, 3);
+insert into produtos (nome, descricao, preco, ativo, restaurante_id) values ('Produto 13', 'Descrição do produto 13', 70.0, true, 3);
+insert into produtos (nome, descricao, preco, ativo, restaurante_id) values ('Produto 14', 'Descrição do produto 14', 75.0, true, 3);
+insert into produtos (nome, descricao, preco, ativo, restaurante_id) values ('Produto 15', 'Descrição do produto 15', 80.0, true, 3);
+insert into produtos (nome, descricao, preco, ativo, restaurante_id) values ('Produto 16', 'Descrição do produto 16', 85.0, true, 4);
+insert into produtos (nome, descricao, preco, ativo, restaurante_id) values ('Produto 17', 'Descrição do produto 17', 90.0, true, 4);
+insert into produtos (nome, descricao, preco, ativo, restaurante_id) values ('Produto 18', 'Descrição do produto 18', 95.0, true, 4);
+insert into produtos (nome, descricao, preco, ativo, restaurante_id) values ('Produto 19', 'Descrição do produto 19', 100.0, true, 4);
+insert into produtos (nome, descricao, preco, ativo, restaurante_id) values ('Produto 20', 'Descrição do produto 20', 105.0, true, 4);
+insert into produtos (nome, descricao, preco, ativo, restaurante_id) values ('Produto 21', 'Descrição do produto 21', 110.0, true, 5);
+insert into produtos (nome, descricao, preco, ativo, restaurante_id) values ('Produto 22', 'Descrição do produto 22', 115.0, true, 5);
+insert into produtos (nome, descricao, preco, ativo, restaurante_id) values ('Produto 23', 'Descrição do produto 23', 120.0, true, 5);
+insert into produtos (nome, descricao, preco, ativo, restaurante_id) values ('Produto 24', 'Descrição do produto 24', 125.0, true, 5);
+insert into produtos (nome, descricao, preco, ativo, restaurante_id) values ('Produto 25', 'Descrição do produto 25', 130.0, true, 5);
+
+insert into restaurantes_formas_pagamento (restaurante_id, forma_pagamento_id) values (1, 1);
+insert into restaurantes_formas_pagamento (restaurante_id, forma_pagamento_id) values (1, 2);
+insert into restaurantes_formas_pagamento (restaurante_id, forma_pagamento_id) values (1, 3);
+insert into restaurantes_formas_pagamento (restaurante_id, forma_pagamento_id) values (1, 4);
+insert into restaurantes_formas_pagamento (restaurante_id, forma_pagamento_id) values (1, 5);
+insert into restaurantes_formas_pagamento (restaurante_id, forma_pagamento_id) values (1, 6);
+insert into restaurantes_formas_pagamento (restaurante_id, forma_pagamento_id) values (2, 1);
+insert into restaurantes_formas_pagamento (restaurante_id, forma_pagamento_id) values (2, 2);
+insert into restaurantes_formas_pagamento (restaurante_id, forma_pagamento_id) values (2, 3);
+insert into restaurantes_formas_pagamento (restaurante_id, forma_pagamento_id) values (2, 4);
+insert into restaurantes_formas_pagamento (restaurante_id, forma_pagamento_id) values (2, 5);
+insert into restaurantes_formas_pagamento (restaurante_id, forma_pagamento_id) values (2, 6);
+insert into restaurantes_formas_pagamento (restaurante_id, forma_pagamento_id) values (3, 1);
+insert into restaurantes_formas_pagamento (restaurante_id, forma_pagamento_id) values (3, 2);
+insert into restaurantes_formas_pagamento (restaurante_id, forma_pagamento_id) values (3, 3);
+insert into restaurantes_formas_pagamento (restaurante_id, forma_pagamento_id) values (3, 4);
+insert into restaurantes_formas_pagamento (restaurante_id, forma_pagamento_id) values (3, 5);
+insert into restaurantes_formas_pagamento (restaurante_id, forma_pagamento_id) values (3, 6);
+insert into restaurantes_formas_pagamento (restaurante_id, forma_pagamento_id) values (4, 1);
+insert into restaurantes_formas_pagamento (restaurante_id, forma_pagamento_id) values (4, 2);
+insert into restaurantes_formas_pagamento (restaurante_id, forma_pagamento_id) values (4, 3);
+insert into restaurantes_formas_pagamento (restaurante_id, forma_pagamento_id) values (4, 4);
+insert into restaurantes_formas_pagamento (restaurante_id, forma_pagamento_id) values (4, 5);
+insert into restaurantes_formas_pagamento (restaurante_id, forma_pagamento_id) values (4, 6);
+insert into restaurantes_formas_pagamento (restaurante_id, forma_pagamento_id) values (5, 1);
+insert into restaurantes_formas_pagamento (restaurante_id, forma_pagamento_id) values (5, 2);
+insert into restaurantes_formas_pagamento (restaurante_id, forma_pagamento_id) values (5, 3);
+insert into restaurantes_formas_pagamento (restaurante_id, forma_pagamento_id) values (5, 4);
+insert into restaurantes_formas_pagamento (restaurante_id, forma_pagamento_id) values (5, 5);
+insert into restaurantes_formas_pagamento (restaurante_id, forma_pagamento_id) values (5, 6);

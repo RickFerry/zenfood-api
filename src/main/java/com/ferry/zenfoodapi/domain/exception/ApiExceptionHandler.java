@@ -16,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -39,7 +40,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
             "Tente novamente e se o problema persistir, entre em contato com o administrador do sistema.";
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<Object> handleUncaught(Exception ex, WebRequest request) {
+    public ResponseEntity<java.lang.Object> handleUncaught(Exception ex, WebRequest request) {
         HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
         ErrorType errorType = ErrorType.ERRO_DE_SISTEMA;
         Error body = createErrorBuilder(status, MSG_USUARIO_FINAL, errorType)
@@ -50,7 +51,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(EntidadeNaoEncontradaException.class)
-    public ResponseEntity<Object> handleEntidadeNaoEncontradaException(
+    public ResponseEntity<java.lang.Object> handleEntidadeNaoEncontradaException(
             EntidadeNaoEncontradaException e, WebRequest request) {
         Error body = createErrorBuilder(HttpStatus.NOT_FOUND, e.getMessage(), ErrorType.RECURSO_NAO_ENCONTRADO)
                 .userMessage(e.getMessage())
@@ -60,7 +61,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(NegocioException.class)
-    public ResponseEntity<Object> handleNegocioException(NegocioException e, WebRequest request) {
+    public ResponseEntity<java.lang.Object> handleNegocioException(NegocioException e, WebRequest request) {
         Error body = createErrorBuilder(HttpStatus.CONFLICT, e.getMessage(), ErrorType.ENTIDADE_EM_USO)
                 .userMessage(e.getMessage())
                 .build();
@@ -69,7 +70,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(ViolacaoDeConstraintException.class)
-    public ResponseEntity<Object> handleViolacaoDeConstraintException(
+    public ResponseEntity<java.lang.Object> handleViolacaoDeConstraintException(
             ViolacaoDeConstraintException e, WebRequest request) {
         Error body = createErrorBuilder(HttpStatus.BAD_REQUEST, e.getMessage(), ErrorType.ERRO_NEGOCIO)
                 .userMessage(MSG_USUARIO_FINAL)
@@ -79,7 +80,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @Override
-    protected ResponseEntity<Object> handleNoHandlerFoundException(
+    protected ResponseEntity<java.lang.Object> handleNoHandlerFoundException(
             NoHandlerFoundException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
         ErrorType errorType = ErrorType.RECURSO_NAO_ENCONTRADO;
         String detail = String.format("O recurso %s, que você tentou acessar, é inexistente.", ex.getRequestURL());
@@ -90,7 +91,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @Override
-    protected ResponseEntity<Object> handleHttpMessageNotReadable(
+    protected ResponseEntity<java.lang.Object> handleHttpMessageNotReadable(
             HttpMessageNotReadableException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
         Throwable cause = ExceptionUtils.getRootCause(ex);
         if (cause instanceof InvalidFormatException) {
@@ -107,8 +108,8 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @Override
-    protected ResponseEntity<Object> handleExceptionInternal(
-            Exception ex, Object body, HttpHeaders headers, HttpStatus status, WebRequest request) {
+    protected ResponseEntity<java.lang.Object> handleExceptionInternal(
+            Exception ex, java.lang.Object body, HttpHeaders headers, HttpStatus status, WebRequest request) {
         if (body == null) {
             body = Error.builder()
                     .timestamp(LocalDateTime.now())
@@ -128,7 +129,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @Override
-    protected ResponseEntity<Object> handleTypeMismatch(TypeMismatchException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
+    protected ResponseEntity<java.lang.Object> handleTypeMismatch(TypeMismatchException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
         if (ex instanceof MethodArgumentTypeMismatchException) {
             return handleMethodArgumentTypeMismatchException((MethodArgumentTypeMismatchException) ex, headers, status, request);
         }
@@ -136,28 +137,30 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @Override
-    protected ResponseEntity<Object> handleMethodArgumentNotValid(
+    protected ResponseEntity<java.lang.Object> handleMethodArgumentNotValid(
             MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
         ErrorType errorType = ErrorType.DADOS_INVALIDOS;
         String detail = "Um ou mais campos estão inválidos. Faça o preenchimento correto e tente novamente.";
-
         BindingResult bindingResult = ex.getBindingResult();
-        List<Field> fields = bindingResult.getFieldErrors().stream().map(fieldError -> {
-            String msg = messageSource.getMessage(fieldError, LocaleContextHolder.getLocale());
-            return Field.builder()
-                    .name(fieldError.getField())
+        List<Object> objects = bindingResult.getAllErrors().stream().map(objectError -> {
+            String msg = messageSource.getMessage(objectError, LocaleContextHolder.getLocale());
+            String name = objectError.getObjectName();
+            if (objectError instanceof FieldError) {
+                name = ((FieldError) objectError).getField();
+            }
+            return Object.builder()
+                    .name(name)
                     .userMessage(msg)
                     .build();
         }).collect(Collectors.toList());
-
         Error body = createErrorBuilder(status, detail, errorType)
                 .userMessage(MSG_USUARIO_FINAL)
-                .fields(fields)
+                .objects(objects)
                 .build();
         return handleExceptionInternal(ex, body, headers, status, request);
     }
 
-    private ResponseEntity<Object> handleMethodArgumentTypeMismatchException(
+    private ResponseEntity<java.lang.Object> handleMethodArgumentTypeMismatchException(
             MethodArgumentTypeMismatchException cause, HttpHeaders headers, HttpStatus status, WebRequest request) {
         ErrorType errorType = ErrorType.PARAMETRO_INVALIDO;
         String detail = String.format("O parâmetro de URL '%s' recebeu o valor '%s', que é de um tipo inválido. " +
@@ -170,7 +173,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         return handleExceptionInternal(cause, body, headers, status, request);
     }
 
-    private ResponseEntity<Object> handlePropertyBindingException(
+    private ResponseEntity<java.lang.Object> handlePropertyBindingException(
             PropertyBindingException cause, HttpHeaders headers, HttpStatus status, WebRequest request) {
         String path = cause.getPath().stream()
                 .map(JsonMappingException.Reference::getFieldName)
@@ -187,7 +190,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         return handleExceptionInternal(cause, body, headers, status, request);
     }
 
-    private ResponseEntity<Object> handleInvalidFormatException(
+    private ResponseEntity<java.lang.Object> handleInvalidFormatException(
             InvalidFormatException cause, HttpHeaders headers, HttpStatus status, WebRequest request) {
         String path = cause.getPath().stream()
                 .map(JsonMappingException.Reference::getFieldName)
@@ -224,13 +227,13 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         private String detail;
         private LocalDateTime timestamp;
         private String userMessage;
-        private List<Field> fields;
+        private List<Object> objects;
     }
 
     @Getter
     @Builder
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    public static class Field {
+    public static class Object {
         private String name;
         private String userMessage;
     }

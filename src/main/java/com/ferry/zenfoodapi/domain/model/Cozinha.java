@@ -1,7 +1,7 @@
 package com.ferry.zenfoodapi.domain.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.ferry.zenfoodapi.Groups;
+import com.ferry.zenfoodapi.core.validation.Groups;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
