@@ -9,7 +9,12 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
+import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.PositiveOrZero;
+import javax.validation.groups.ConvertGroup;
+import javax.validation.groups.Default;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.LinkedHashSet;
@@ -29,7 +34,10 @@ public class Restaurante {
 
     @NotBlank
     private String nome;
+
+    @PositiveOrZero
     private BigDecimal taxaFrete;
+
     private Boolean ativo;
     private Boolean aberto;
 
@@ -49,9 +57,12 @@ public class Restaurante {
     @OneToMany(mappedBy = "restaurante", orphanRemoval = true)
     private Set<Produto> produtos = new LinkedHashSet<>();
 
-//    @JsonIgnore
+    //    @JsonIgnore
+    @Valid
+    @NotNull
     @JoinColumn(name = "cozinha_id")
     @ManyToOne(fetch = FetchType.LAZY)
+    @ConvertGroup(to = Groups.CozinhaId.class)
     private Cozinha cozinha;
 
     @JsonIgnore

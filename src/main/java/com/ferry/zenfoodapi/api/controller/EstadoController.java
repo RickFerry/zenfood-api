@@ -11,6 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import javax.validation.Valid;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/estados")
@@ -32,7 +34,7 @@ public class EstadoController {
     }
 
     @PostMapping
-    public ResponseEntity<Estado> adicionar(@RequestBody Estado estado, UriComponentsBuilder uriBuilder) {
+    public ResponseEntity<Estado> adicionar(@RequestBody @Valid Estado estado, UriComponentsBuilder uriBuilder) {
         Estado estadoSalvo = estadoService.salvar(estado);
         return ResponseEntity.created(uriBuilder.path("/{id}")
                 .buildAndExpand(estadoSalvo.getId())
@@ -40,7 +42,7 @@ public class EstadoController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Estado> atualizar(@PathVariable Long id, @RequestBody Estado estado) {
+    public ResponseEntity<Estado> atualizar(@PathVariable Long id, @RequestBody @Valid Estado estado) {
         try {
             return ResponseEntity.ok(estadoService.atualizar(id, estado));
         } catch (EstadoNaoEncontradoException e) {

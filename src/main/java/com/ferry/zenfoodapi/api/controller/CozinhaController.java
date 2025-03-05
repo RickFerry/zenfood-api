@@ -11,6 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import javax.validation.Valid;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/cozinhas")
@@ -32,7 +34,7 @@ public class CozinhaController {
     }
 
     @PostMapping
-    public ResponseEntity<Cozinha> adicionar(@RequestBody Cozinha cozinha, UriComponentsBuilder uriBuilder) {
+    public ResponseEntity<Cozinha> adicionar(@RequestBody @Valid Cozinha cozinha, UriComponentsBuilder uriBuilder) {
         Cozinha cozinhaSalva = cozinhaService.salvar(cozinha);
         return ResponseEntity.created(uriBuilder.path("/{id}")
                 .buildAndExpand(cozinhaSalva.getId())
@@ -40,7 +42,7 @@ public class CozinhaController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Cozinha> atualizar(@PathVariable Long id, @RequestBody Cozinha cozinha) {
+    public ResponseEntity<Cozinha> atualizar(@PathVariable Long id, @RequestBody @Valid Cozinha cozinha) {
         try {
             Cozinha cozinhaAtualizada = cozinhaService.atualizar(id, cozinha);
             return ResponseEntity.ok(cozinhaAtualizada);

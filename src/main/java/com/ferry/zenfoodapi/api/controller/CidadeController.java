@@ -11,6 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import javax.validation.Valid;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/cidades")
@@ -32,7 +34,7 @@ public class CidadeController {
     }
 
     @PostMapping
-    public ResponseEntity<?> adicionar(@RequestBody Cidade cidade, UriComponentsBuilder uri) {
+    public ResponseEntity<?> adicionar(@RequestBody @Valid Cidade cidade, UriComponentsBuilder uri) {
         try {
             Cidade cidadeSalva = cidadeService.salvar(cidade);
             return ResponseEntity.created(uri.path("/{id}").buildAndExpand(cidadeSalva.getId()).toUri())
@@ -43,7 +45,7 @@ public class CidadeController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> atualizar(@PathVariable Long id, @RequestBody Cidade cidade) {
+    public ResponseEntity<?> atualizar(@PathVariable Long id, @RequestBody @Valid Cidade cidade) {
         try {
             return ResponseEntity.ok(cidadeService.atualizar(id, cidade));
         } catch (CidadeNaoEncontradaException e) {
