@@ -43,6 +43,7 @@ public class CozinhaService {
     public void remover(Long id) {
         try {
             cozinhaRepository.delete(getOredElseThrow(id));
+            cozinhaRepository.flush();
         } catch (DataIntegrityViolationException e) {
             throw new ViolacaoDeConstraintException(
                     String.format("Cozinha de código %d não pode ser removida, pois está em uso", id));
