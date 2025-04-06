@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: zenfood-api
+  jpa:
+    database: MYSQL
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+  datasource:
+    url: jdbc:mysql://localhost:3306/zdb_test?createDatabaseIfNotExist=true&useSSL=false
+    username: root
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      maximum-pool-size: 1
+  flyway:
+    locations: classpath:db/migration
