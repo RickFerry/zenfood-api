@@ -2,6 +2,7 @@ package com.ferry.zenfoodapi.api.controller;
 
 import com.ferry.zenfoodapi.api.service.CozinhaService;
 import com.ferry.zenfoodapi.domain.exception.CozinhaNaoEncontradaException;
+import com.ferry.zenfoodapi.domain.exception.ViolacaoDeConstraintException;
 import com.ferry.zenfoodapi.domain.model.Cozinha;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -58,7 +59,7 @@ public class CozinhaController {
             return ResponseEntity.noContent().build();
         } catch (CozinhaNaoEncontradaException e) {
             return ResponseEntity.notFound().build();
-        } catch (DataIntegrityViolationException e) {
+        } catch (ViolacaoDeConstraintException e) {
             return ResponseEntity.status(409).build();
         }
     }
