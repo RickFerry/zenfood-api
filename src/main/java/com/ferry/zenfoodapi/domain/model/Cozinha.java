@@ -30,6 +30,6 @@ public class Cozinha {
     private String nome;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "cozinha", orphanRemoval = true)
+    @OneToMany(mappedBy = "cozinha")
     private Set<Restaurante> restaurantes = new LinkedHashSet<>();
 }

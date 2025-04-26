@@ -99,6 +99,7 @@ public class RestauranteService {
 
             camposOrigem.forEach((nomePropriedade, valorPropriedade) -> {
                 Field field = ReflectionUtils.findField(Restaurante.class, nomePropriedade);
+                assert field != null;
                 field.setAccessible(true);
 
                 Object novoValor = ReflectionUtils.getField(field, restauranteOrigem);

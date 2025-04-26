@@ -25,7 +25,7 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -117,14 +117,14 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
             Exception ex, java.lang.Object body, HttpHeaders headers, HttpStatus status, WebRequest request) {
         if (body == null) {
             body = Error.builder()
-                    .timestamp(LocalDateTime.now())
+                    .timestamp(OffsetDateTime.now())
                     .title(status.getReasonPhrase())
                     .status(status.value())
                     .userMessage(MSG_USUARIO_FINAL)
                     .build();
         } else if (body instanceof String) {
             body = Error.builder()
-                    .timestamp(LocalDateTime.now())
+                    .timestamp(OffsetDateTime.now())
                     .title((String) body)
                     .status(status.value())
                     .userMessage(MSG_USUARIO_FINAL)
@@ -219,7 +219,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
     private Error.ErrorBuilder createErrorBuilder(HttpStatus status, String detail, ErrorType type) {
         return Error.builder()
-                .timestamp(LocalDateTime.now())
+                .timestamp(OffsetDateTime.now())
                 .status(status.value())
                 .type(type.getUri())
                 .title(type.getTitle())
@@ -235,7 +235,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         private String type;
         private String title;
         private String detail;
-        private LocalDateTime timestamp;
+        private OffsetDateTime timestamp;
         private String userMessage;
         private List<Object> objects;
     }

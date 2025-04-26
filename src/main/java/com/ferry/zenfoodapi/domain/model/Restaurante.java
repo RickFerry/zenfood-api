@@ -1,6 +1,7 @@
 package com.ferry.zenfoodapi.domain.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.ferry.zenfoodapi.core.validation.Groups;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -16,7 +17,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PositiveOrZero;
 import javax.validation.groups.ConvertGroup;
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -46,11 +47,11 @@ public class Restaurante {
 
     @JsonIgnore
     @CreationTimestamp
-    private LocalDateTime dataCadastro;
+    private OffsetDateTime dataCadastro;
 
     @JsonIgnore
     @UpdateTimestamp
-    private LocalDateTime dataAtualizacao;
+    private OffsetDateTime dataAtualizacao;
 
     @Embedded
     @JsonIgnore
@@ -66,6 +67,7 @@ public class Restaurante {
     @JoinColumn(name = "cozinha_id")
     @ManyToOne(fetch = FetchType.LAZY)
     @ConvertGroup(to = Groups.CozinhaId.class)
+    @JsonIgnoreProperties(value = "nome", allowGetters = true)
     private Cozinha cozinha;
 
     @JsonIgnore
