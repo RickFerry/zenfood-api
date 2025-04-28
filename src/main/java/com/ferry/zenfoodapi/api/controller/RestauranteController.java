@@ -5,6 +5,8 @@ import com.ferry.zenfoodapi.domain.exception.CozinhaNaoEncontradaException;
 import com.ferry.zenfoodapi.domain.exception.NegocioException;
 import com.ferry.zenfoodapi.domain.exception.RestauranteNaoEncontradoException;
 import com.ferry.zenfoodapi.domain.model.Restaurante;
+import com.ferry.zenfoodapi.domain.model.dto.request.RestauranteRequest;
+import com.ferry.zenfoodapi.domain.model.dto.response.RestauranteResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -23,12 +25,12 @@ public class RestauranteController {
     private final RestauranteService restauranteService;
 
     @GetMapping
-    public ResponseEntity<Page<Restaurante>> listar(Pageable pageable) {
+    public ResponseEntity<Page<RestauranteResponse>> listar(Pageable pageable) {
         return ResponseEntity.ok(restauranteService.listar(pageable));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Restaurante> buscar(@PathVariable Long id) {
+    public ResponseEntity<RestauranteResponse> buscar(@PathVariable Long id) {
         try {
             return ResponseEntity.ok(restauranteService.buscar(id));
         } catch (RestauranteNaoEncontradoException e) {
@@ -37,9 +39,9 @@ public class RestauranteController {
     }
 
     @PostMapping
-    public ResponseEntity<?> adicionar(@RequestBody @Valid Restaurante restaurante, UriComponentsBuilder uriBuilder) {
+    public ResponseEntity<?> adicionar(@RequestBody @Valid RestauranteRequest restaurante, UriComponentsBuilder uriBuilder) {
         try {
-            Restaurante restauranteSalvo = restauranteService.salvar(restaurante);
+            RestauranteResponse restauranteSalvo = restauranteService.salvar(restaurante);
             return ResponseEntity.created(uriBuilder.path("/{id}")
                     .buildAndExpand(restauranteSalvo.getId())
                     .toUri()).body(restauranteSalvo);

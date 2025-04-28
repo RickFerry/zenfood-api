@@ -2,11 +2,15 @@ package com.ferry.zenfoodapi.api.service;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ferry.zenfoodapi.core.mapper.CozinhaMapper;
+import com.ferry.zenfoodapi.core.mapper.RestauranteMapper;
 import com.ferry.zenfoodapi.domain.exception.CozinhaNaoEncontradaException;
 import com.ferry.zenfoodapi.domain.exception.RestauranteNaoEncontradoException;
 import com.ferry.zenfoodapi.domain.exception.ValidacaoException;
 import com.ferry.zenfoodapi.domain.model.Cozinha;
 import com.ferry.zenfoodapi.domain.model.Restaurante;
+import com.ferry.zenfoodapi.domain.model.dto.request.RestauranteRequest;
+import com.ferry.zenfoodapi.domain.model.dto.response.RestauranteResponse;
 import com.ferry.zenfoodapi.domain.repository.CozinhaRepository;
 import com.ferry.zenfoodapi.domain.repository.RestauranteRepository;
 import lombok.RequiredArgsConstructor;
@@ -33,23 +37,27 @@ public class RestauranteService {
     private final RestauranteRepository restauranteRepository;
     private final CozinhaRepository cozinhaRepository;
     private final SmartValidator validator;
+    private final RestauranteMapper restauranteMapper;
+    private final CozinhaMapper cozinhaMapper;
 
     @Transactional(readOnly = true)
-    public Page<Restaurante> listar(Pageable pageable) {
-        return restauranteRepository.findAll(pageable);
+    public Page<RestauranteResponse> listar(Pageable pageable) {
+        Page<Restaurante> restaurantes = restauranteRepository.findAll(pageable);
+        return restauranteMapper.toPageDto(restaurantes);
     }
 
     @Transactional(readOnly = true)
-    public Restaurante buscar(Long id) {
-        return getRestauranteOrElseThrow(id);
+    public RestauranteResponse buscar(Long id) {
+        Restaurante restaurante = getRestauranteOrElseThrow(id);
+        return restauranteMapper.toDto(restaurante);
     }
 
     @Transactional
-    public Restaurante salvar(Restaurante restaurante) {
-        Long cozinhaId = restaurante.getCozinha().getId();
-        Cozinha cozinha = getCozinhaOrElseThrow(cozinhaId);
-        restaurante.setCozinha(cozinha);
-        return restauranteRepository.save(restaurante);
+    public RestauranteResponse salvar(RestauranteRequest restaurante) {
+        Restaurante restauranteModel = restauranteMapper.toModel(restaurante);
+        Cozinha cozinha = getCozinhaOrElseThrow(restaurante.getCozinha().getId());
+        restauranteModel.setCozinha(cozinha);
+        return restauranteMapper.toDto(restauranteRepository.save(restauranteModel));
     }
 
     @Transactional
