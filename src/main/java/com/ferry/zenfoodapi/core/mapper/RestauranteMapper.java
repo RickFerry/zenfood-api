@@ -1,5 +1,6 @@
 package com.ferry.zenfoodapi.core.mapper;
 
+import com.ferry.zenfoodapi.domain.model.Cozinha;
 import com.ferry.zenfoodapi.domain.model.Restaurante;
 import com.ferry.zenfoodapi.domain.model.dto.request.RestauranteRequest;
 import com.ferry.zenfoodapi.domain.model.dto.response.RestauranteResponse;
@@ -24,6 +25,10 @@ public class RestauranteMapper {
         return mapper.map(restaurante, RestauranteResponse.class);
     }
 
+    public RestauranteRequest toDtoRequest(Restaurante model) {
+        return mapper.map(model, RestauranteRequest.class);
+    }
+
     public List<RestauranteResponse> toCollectionDto(List<Restaurante> restaurantes) {
         return restaurantes.stream()
                 .map(this::toDto)
@@ -32,5 +37,10 @@ public class RestauranteMapper {
 
     public Page<RestauranteResponse> toPageDto(Page<Restaurante> restaurantes) {
         return restaurantes.map(this::toDto);
+    }
+
+    public void updateModel(RestauranteRequest dto, Restaurante restaurante) {
+        restaurante.setCozinha(new Cozinha());
+        mapper.map(dto, restaurante);
     }
 }

@@ -2,7 +2,6 @@ package com.ferry.zenfoodapi.api.service;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ferry.zenfoodapi.core.mapper.CozinhaMapper;
 import com.ferry.zenfoodapi.core.mapper.RestauranteMapper;
 import com.ferry.zenfoodapi.domain.exception.CozinhaNaoEncontradaException;
 import com.ferry.zenfoodapi.domain.exception.RestauranteNaoEncontradoException;
@@ -29,7 +28,6 @@ import java.lang.reflect.Field;
 import java.util.Map;
 
 import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCause;
-import static org.springframework.beans.BeanUtils.copyProperties;
 
 @Service
 @RequiredArgsConstructor
@@ -38,7 +36,6 @@ public class RestauranteService {
     private final CozinhaRepository cozinhaRepository;
     private final SmartValidator validator;
     private final RestauranteMapper restauranteMapper;
-    private final CozinhaMapper cozinhaMapper;
 
     @Transactional(readOnly = true)
     public Page<RestauranteResponse> listar(Pageable pageable) {
@@ -61,31 +58,21 @@ public class RestauranteService {
     }
 
     @Transactional
-    public Restaurante atualizar(Long id, Restaurante restaurante) {
+    public RestauranteResponse atualizar(Long id, RestauranteRequest dto) {
         Restaurante restauranteAtual = getRestauranteOrElseThrow(id);
-        Long cozinhaId = restaurante.getCozinha().getId();
-        Cozinha cozinha = getCozinhaOrElseThrow(cozinhaId);
-        copyProperties(
-                restaurante, restauranteAtual, "id", "formasPagamento", "endereco", "dataCadastro", "produtos");
+        Cozinha cozinha = getCozinhaOrElseThrow(dto.getCozinha().getId());
+        restauranteMapper.updateModel(dto, restauranteAtual);
         restauranteAtual.setCozinha(cozinha);
-        return restauranteRepository.save(restauranteAtual);
+        return restauranteMapper.toDto(restauranteRepository.save(restauranteAtual));
     }
 
     @Transactional
-    public Restaurante atualizarParcial(Long id, Map<String, Object> campos, HttpServletRequest request) {
+    public RestauranteResponse atualizarParcial(Long id, Map<String, Object> campos, HttpServletRequest request) {
         Restaurante restauranteAtual = getRestauranteOrElseThrow(id);
         merge(campos, restauranteAtual, request);
         validador(restauranteAtual);
-        return this.atualizar(id, restauranteAtual);
-    }
-
-    private void validador(Restaurante restauranteAtual) {
-        BeanPropertyBindingResult bindingResult = new BeanPropertyBindingResult(restauranteAtual, "restaurante");
-        validator.validate(restauranteAtual, bindingResult);
-
-        if (bindingResult.hasErrors()) {
-            throw new ValidacaoException(bindingResult);
-        }
+        RestauranteRequest dtoRequest = restauranteMapper.toDtoRequest(restauranteAtual);
+        return this.atualizar(id, dtoRequest);
     }
 
     @Transactional
@@ -94,6 +81,15 @@ public class RestauranteService {
             restauranteRepository.delete(getRestauranteOrElseThrow(id));
         } catch (RestauranteNaoEncontradoException e) {
             throw new RestauranteNaoEncontradoException(String.format("Restaurante de código %d não encontrado", id));
+        }
+    }
+
+    private void validador(Restaurante restauranteAtual) {
+        BeanPropertyBindingResult bindingResult = new BeanPropertyBindingResult(restauranteAtual, "restaurante");
+        validator.validate(restauranteAtual, bindingResult);
+
+        if (bindingResult.hasErrors()) {
+            throw new ValidacaoException(bindingResult);
         }
     }
 

@@ -4,7 +4,6 @@ import com.ferry.zenfoodapi.api.service.RestauranteService;
 import com.ferry.zenfoodapi.domain.exception.CozinhaNaoEncontradaException;
 import com.ferry.zenfoodapi.domain.exception.NegocioException;
 import com.ferry.zenfoodapi.domain.exception.RestauranteNaoEncontradoException;
-import com.ferry.zenfoodapi.domain.model.Restaurante;
 import com.ferry.zenfoodapi.domain.model.dto.request.RestauranteRequest;
 import com.ferry.zenfoodapi.domain.model.dto.response.RestauranteResponse;
 import lombok.RequiredArgsConstructor;
@@ -51,7 +50,7 @@ public class RestauranteController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> atualizar(@PathVariable Long id, @RequestBody @Valid Restaurante restaurante) {
+    public ResponseEntity<?> atualizar(@PathVariable Long id, @RequestBody @Valid RestauranteRequest restaurante) {
         try {
             return ResponseEntity.ok(restauranteService.atualizar(id, restaurante));
         } catch (CozinhaNaoEncontradaException e) {
