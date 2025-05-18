@@ -84,6 +84,18 @@ public class RestauranteService {
         }
     }
 
+    @Transactional
+    public void ativar(Long id) {
+        Restaurante restaurante = getRestauranteOrElseThrow(id);
+        restaurante.ativar();
+    }
+
+    @Transactional
+    public void inativar(Long id) {
+        Restaurante restaurante = getRestauranteOrElseThrow(id);
+        restaurante.inativar();
+    }
+
     private void validador(Restaurante restauranteAtual) {
         BeanPropertyBindingResult bindingResult = new BeanPropertyBindingResult(restauranteAtual, "restaurante");
         validator.validate(restauranteAtual, bindingResult);

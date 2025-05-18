@@ -76,4 +76,12 @@ public class Restaurante {
             joinColumns = @JoinColumn(name = "restaurante_id"),
             inverseJoinColumns = @JoinColumn(name = "forma_Pagamento_id"))
     private Set<FormaPagamento> formasPagamento = new LinkedHashSet<>();
+
+    public void ativar() {
+        setAtivo(true);
+    }
+
+    public void inativar() {
+        setAtivo(false);
+    }
 }

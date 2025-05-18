@@ -74,4 +74,24 @@ public class RestauranteController {
             return ResponseEntity.notFound().build();
         }
     }
+
+    @PutMapping("/{id}/ativar")
+    public ResponseEntity<?> ativar(@PathVariable Long id) {
+        try {
+            restauranteService.ativar(id);
+            return ResponseEntity.noContent().build();
+        } catch (RestauranteNaoEncontradoException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @DeleteMapping("/{id}/ativar")
+    public ResponseEntity<?> inativar(@PathVariable Long id) {
+        try {
+            restauranteService.inativar(id);
+            return ResponseEntity.noContent().build();
+        } catch (RestauranteNaoEncontradoException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
 }
