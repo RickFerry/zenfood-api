@@ -17,10 +17,10 @@ create table estados (
     primary key (id)
 ) engine=InnoDB;
 
-create table formas_pagamento (
-   id bigint not null auto_increment,
-    descricao varchar(255),
-    primary key (id)
+CREATE TABLE formas_pagamento (
+    id        BIGINT AUTO_INCREMENT NOT NULL,
+    descricao VARCHAR(255)          NOT NULL,
+    CONSTRAINT pk_formas_pagamento PRIMARY KEY (id)
 ) engine=InnoDB;
 
 create table grupos (
