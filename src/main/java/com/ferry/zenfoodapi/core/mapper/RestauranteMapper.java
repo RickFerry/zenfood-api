@@ -1,5 +1,6 @@
 package com.ferry.zenfoodapi.core.mapper;
 
+import com.ferry.zenfoodapi.domain.model.Cidade;
 import com.ferry.zenfoodapi.domain.model.Cozinha;
 import com.ferry.zenfoodapi.domain.model.Restaurante;
 import com.ferry.zenfoodapi.domain.model.dto.request.RestauranteRequest;
@@ -41,6 +42,9 @@ public class RestauranteMapper {
 
     public void updateModel(RestauranteRequest dto, Restaurante restaurante) {
         restaurante.setCozinha(new Cozinha());
+        if (restaurante.getCozinha() != null) {
+            restaurante.getEndereco().setCidade(new Cidade());
+        }
         mapper.map(dto, restaurante);
     }
 }

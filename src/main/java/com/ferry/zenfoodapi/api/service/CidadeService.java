@@ -52,7 +52,7 @@ public class CidadeService {
         cidadeRepository.delete(getCidadeOrElseThrow(id));
     }
 
-    private Cidade getCidadeOrElseThrow(Long id) {
+    Cidade getCidadeOrElseThrow(Long id) {
         return cidadeRepository.findById(id).orElseThrow(
                 () -> new CidadeNaoEncontradaException(String.format("Cidade com id %d não encontrada", id)));
     }

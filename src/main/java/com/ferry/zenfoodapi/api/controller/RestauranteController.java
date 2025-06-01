@@ -1,6 +1,7 @@
 package com.ferry.zenfoodapi.api.controller;
 
 import com.ferry.zenfoodapi.api.service.RestauranteService;
+import com.ferry.zenfoodapi.domain.exception.CidadeNaoEncontradaException;
 import com.ferry.zenfoodapi.domain.exception.CozinhaNaoEncontradaException;
 import com.ferry.zenfoodapi.domain.exception.NegocioException;
 import com.ferry.zenfoodapi.domain.exception.RestauranteNaoEncontradoException;
@@ -44,7 +45,7 @@ public class RestauranteController {
             return ResponseEntity.created(uriBuilder.path("/{id}")
                     .buildAndExpand(restauranteSalvo.getId())
                     .toUri()).body(restauranteSalvo);
-        } catch (CozinhaNaoEncontradaException e) {
+        } catch (CozinhaNaoEncontradaException | CidadeNaoEncontradaException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
@@ -53,7 +54,7 @@ public class RestauranteController {
     public ResponseEntity<?> atualizar(@PathVariable Long id, @RequestBody @Valid RestauranteRequest restaurante) {
         try {
             return ResponseEntity.ok(restauranteService.atualizar(id, restaurante));
-        } catch (CozinhaNaoEncontradaException e) {
+        } catch (CozinhaNaoEncontradaException | CidadeNaoEncontradaException e) {
             throw new NegocioException(e.getMessage());
         }
     }

@@ -6,6 +6,7 @@ import com.ferry.zenfoodapi.core.mapper.RestauranteMapper;
 import com.ferry.zenfoodapi.domain.exception.CozinhaNaoEncontradaException;
 import com.ferry.zenfoodapi.domain.exception.RestauranteNaoEncontradoException;
 import com.ferry.zenfoodapi.domain.exception.ValidacaoException;
+import com.ferry.zenfoodapi.domain.model.Cidade;
 import com.ferry.zenfoodapi.domain.model.Cozinha;
 import com.ferry.zenfoodapi.domain.model.Restaurante;
 import com.ferry.zenfoodapi.domain.model.dto.request.RestauranteRequest;
@@ -36,6 +37,7 @@ public class RestauranteService {
     private final CozinhaRepository cozinhaRepository;
     private final SmartValidator validator;
     private final RestauranteMapper restauranteMapper;
+    private final CidadeService cidadeService;
 
     @Transactional(readOnly = true)
     public Page<RestauranteResponse> listar(Pageable pageable) {
@@ -52,8 +54,13 @@ public class RestauranteService {
     @Transactional
     public RestauranteResponse salvar(RestauranteRequest restaurante) {
         Restaurante restauranteModel = restauranteMapper.toModel(restaurante);
+
         Cozinha cozinha = getCozinhaOrElseThrow(restaurante.getCozinha().getId());
+        Cidade cidade = cidadeService.getCidadeOrElseThrow(restauranteModel.getEndereco().getCidade().getId());
+
         restauranteModel.setCozinha(cozinha);
+        restauranteModel.getEndereco().setCidade(cidade);
+
         return restauranteMapper.toDto(restauranteRepository.save(restauranteModel));
     }
 
@@ -61,8 +68,13 @@ public class RestauranteService {
     public RestauranteResponse atualizar(Long id, RestauranteRequest dto) {
         Restaurante restauranteAtual = getRestauranteOrElseThrow(id);
         Cozinha cozinha = getCozinhaOrElseThrow(dto.getCozinha().getId());
+        Cidade cidade = cidadeService.getCidadeOrElseThrow(dto.getEndereco().getCidade().getId());
+
         restauranteMapper.updateModel(dto, restauranteAtual);
+
         restauranteAtual.setCozinha(cozinha);
+        restauranteAtual.getEndereco().setCidade(cidade);
+
         return restauranteMapper.toDto(restauranteRepository.save(restauranteAtual));
     }
 
